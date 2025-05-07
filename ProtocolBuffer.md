@@ -9,7 +9,8 @@
 ## Purpose of Protocol Buffers
 *  It's like JSON, except it's smaller and faster
 * it can be used in most modern languages, so no matter what language or languages your team is using, be it PHP, C#, Java, or even Visual Basic
-* gRPC is once again a technology created by Google to allow in inter‑service communication, but at a slightly higher level. Protocol Buffers is a messaging format.
+* Protocol Buffers is a messaging format.
+* gRPC is once again a technology created by Google to allow in inter‑service communication, but at a slightly higher level.
 * GRPC is a way for services to communicate with one another using a system called Remote Procedure Call
 * Both gRPC and protocol buffer are platform neutral
 ###  Attributes of Protocol Buffers
@@ -95,6 +96,14 @@ message Address {
     string county = 4;
 }
 ```
+1.Install the Proto Installer in the Proto file path
+
+2.Convert the Proto file to CSharp code by using the command
+```bash
+protoc --csharp_out=. subscriber.proto
+```
+3.Then we will get the Subscriber.cs file in the same directory with specified namespace if mentioned (eg:CSharpProtoSourceFile).
+
 Program.cs
 ```csharp
 using Google.Protobuf;
