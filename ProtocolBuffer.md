@@ -3,10 +3,13 @@
 ## Introduction
 * By google in 2001 as internal project for inter-service communication.
 * Network services to communicate quickly and efficiently.
+
 ## Version Information
 * Protocol Buggers v26.0
 * Supports Protocol Buffers v3.0.0 +
 ## Purpose of Protocol Buffers
+* Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data
+* Supports ployglot programming
 *  It's like JSON, except it's smaller and faster
 * it can be used in most modern languages, so no matter what language or languages your team is using, be it PHP, C#, Java, or even Visual Basic
 * Protocol Buffers is a messaging format.
