@@ -35,6 +35,34 @@ dotnet run --launch-profile https
 * Identity
 * MVC
 * Entity Framework core
+## Program.cs
+```bash 
+  var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+
+            app.MapControllers();
+
+            app.Run();
 ## Services
  Once we have a builder, the services collection on that builder is what we can add services to while configuring them. This is the built‑in dependency injection container. So by adding services to it, we can inject them wherever we need them later on in our code.
  ```bash
@@ -70,6 +98,82 @@ AddEndpointsApiExplorer and AddSwaggerGen both have to do with the Swagger docum
   ![Alt text](Asserts/requestPipeline.JPG?raw=true)
   #### Example 
   Example would be authentication middleware. If the middleware component finds that the request is not authorized, it will not pass it on to the next piece of middleware, but it will immediately return an unauthorized response. It's thus important that the authentication middleware in case of our example is added before other components that shouldn't be triggered in case of an unauthorized request.
+ ## app.Environment.IsDevelopment
+ check whether the current environment is a development environment. By surrounding middleware with it, we signify that the Swagger‑related middleware will only be added when we're running in the development environment.
+
+ ## MVC
+ ![Alt text](Asserts/mvc.JPG?raw=true)
+ ## Building Controller
+ ### ControllerBase
+ ControllerBase contains basic functionality controllers need, like access to the model state, the current user, and common methods for returning responses. You could also derive from controller, but that Base class contains additional helper methods to use when returning views, which isn't needed when building an API
+
+ ### ApiController attribute
+ This isn't strictly necessary. But doing so, configures this controller with features and behavior aimed at improving the development experience when building APIs. Think about requiring a certain type of routing, automatically returning a 400 Bad Request on bad input, and returning problem details on errors
+ ## Routing
+ * Routing matches a request URI to an action on a controller.
+ *  the preferred way to set this up is through endpoint routing.
+ *  To set up endpoint routing, two pieces of middleware must be injected in the request pipeline  by calling into app.UseRouting and app.UseEndpoints
+ ### App.UseRouting
+ App.UseRouting marks the position in the middleware pipeline where an endpoint is selected.
+ ### App.UseEndpoints
+ app.UseEndpoints marks the position in the middleware pipeline where the selected endpoint is executed
+ ### App.UseRouting  & App.UseEndpoints
+ This allows us to inject middleware that runs in between selecting the endpoint and executing the selected endpoint
+ ## Mapping Endpoints
+ Need to map the endpoints, though. There's two ways of setting these up, convention based or attribute based. For APIs, attribute‑based routing should be used, so we will focus on that. MapControllers add endpoints for our controller actions, but without specifying routes. In other words, by calling into this, no conventions will be applied. This is the preferred approach for APIs.
+  ![Alt text](Asserts/mappingControllers.JPG?raw=true)
+ ### MapControllers
+  MapControllers is a method that adds the necessary endpoints to the request pipeline for attribute routing. This means that the routing information is defined on the controller and action methods themselves, rather than in a centralized location.
+  ### MapControllerShortcut
+  Instead of adding the Routing middleware and Endpoint middleware to the request pipeline manually and then calling MapControllers when setting up the Endpoint middleware, you can omit adding the middleware to the request pipeline manually, and simply call MapControllers on the WebApplication object. That's because this WebApplication object implements IEndpoint routing
+ ![Alt text](Asserts/mappingControllerShortcut.JPG?raw=true) 
+ ## Attribute Based Routing
+  ![Alt text](Asserts/attributebasedrouting.JPG?raw=true)
+## Problem Details
+
+![Alt text](Asserts/describingErrorDetails.JPG?raw=true)
+```url
+datatracker.ietf.org/doc/html/rfc7807
+```
+The reasoning behind that is that sometimes HTTP status codes are not sufficient to convey enough information about an error to be helpful. In those cases, a response body that follows a specific standard, like the Problem Detail standard, is very useful.
+![Alt text](Asserts/problemDetails.JPG?raw=true)
+## Content Negotiation
+This is the process of selecting the best representation for a given response when there are multiple representations available.
+## Formatters
+Formatters are responsible for serializing and deserializing the data. They are used to convert the data from the server to a format that can be sent over the wire, and vice versa. ASP.NET Core supports multiple formatters out of the box, including JSON, XML, and plain text.
+if that Accept header has a value of application/json, the consumer states that if your API supports the requested format, it should return that format. If it has a value of application XML, it should return an XML representation, and so on. If no accept error is available or if it doesn't support the requested format, it can always default to its default format.
+![Alt text](Asserts/formatters.JPG?raw=true)
+## ObjectResult
+ObjectResult is a type of ActionResult that can be used to return any type of object. It is the base class for all action results that return an object, including JsonResult and FileResult. ObjectResult is used when you want to return an object that is not a file or a view.
+
+Support for content negotiation from our actions is implemented by ObjectResult. And it's also built into the status code specific action results returned from the helper methods, like the OK and NotFound helper methods we've been using. These action result helper methods are based on ObjectResult and thus support content negotiation. Were we to only return a model class from our actions, it's automatically wrapped in an ObjectResult so that, too, supports content negotiation. We do not have to do anything extra for that. All we need to do to ensure that these ObjectResult deriving results support the format we want is add or configure the correct formatter
+
+![Alt text](Asserts/objectResult.JPG?raw=true)
+
+## Support Formatter
+
+We can also send Not supported response when the requested format is not supported. This is done by adding a NotAcceptable formatter to the list of formatters. This formatter will return a 406 Not Acceptable response if the requested format is not supported.
+
+In the below figure we can see that the xmlFormatter is included.So that it will return the response as xml.
+![Alt text](Asserts/supporFormatters.JPG?raw=true)
+
+## Download File
+![Alt text](Asserts/downloadFile.JPG?raw=true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
