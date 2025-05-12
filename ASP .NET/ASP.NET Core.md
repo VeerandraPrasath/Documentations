@@ -155,7 +155,7 @@ Support for content negotiation from our actions is implemented by ObjectResult.
 We can also send Not supported response when the requested format is not supported. This is done by adding a NotAcceptable formatter to the list of formatters. This formatter will return a 406 Not Acceptable response if the requested format is not supported.
 
 In the below figure we can see that the xmlFormatter is included.So that it will return the response as xml.
-![Alt text](Asserts/supporFormatters.JPG?raw=true)
+![Alt text](Asserts/supportFormatters.JPG?raw=true)
 
 ## Download File
 ![Alt text](Asserts/downloadFile.JPG?raw=true)
