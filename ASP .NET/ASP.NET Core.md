@@ -160,6 +160,70 @@ In the below figure we can see that the xmlFormatter is included.So that it will
 ## Download File
 ![Alt text](Asserts/downloadFile.JPG?raw=true)
 
+# Manipulating Resources and Validating Input
+## Passing Data to the API
+ * FromBody is inferred for complex type parameters. A good example would be adding a point of interest, which we'll immediately tackle. Types with special meanings like CancellationToken, IFormCollection and so on are ignored.
+ * FromForm then is inferred for action parameters of type IFormFile and IFormFileCollection. It is not inferred for any simple or user‑defined types. 
+ * FromRoute is inferred for any action parameter name matching a parameter in the route template. When more than one route matches an action parameter, any route value is considered FromRoute. And lastly,
+ * FromQuery is inferred for any other action parameters
+
+ ![Alt text](Asserts/fromBodyAndForm.JPG?raw=true)
+ ![Alt text](Asserts/fromRouteAndQuery.JPG?raw=true)
+ ## Create Resource
+ We can also add the "[FromBody]" attribute to the action parameter. This tells ASP.NET Core to look for the data in the request body, regardless of the content type. This is useful when we want to send complex data types, such as JSON or XML, in the request body.Here in the below figure ,It is not needed for the PointOfInterestForCreationDto object in the parameter.It gets serialize automatically .
+ ![Alt text](Asserts/createResource1.JPG?raw=true)
+ <br>The "CreateAtRoute" is used to define the location in the response body.So that we comes to know the endpoints to access the PointOfInterest of the newly created one .<br>
+  ![Alt text](Asserts/createResource2.JPG?raw=true)
+## Validating Inputs
+ ### DataAnnotation
+ DataAnnotation are used to validate the input body. They are defined in System.ComponentModel.DataAnnotations.
+ ![Alt text](Asserts/dataAnnotation.JPG?raw=true)
+ ### ModelState
+ ModelState is a dictionary containing both the state of the model, that's our PointOfInterestForCreation detail and model‑binding validation. It represents a collection of name‑value pairs that were submitted to our API, one for each property. It also contains a collection of error messages for each value submitted. Whenever a request comes in, the rules we just apply to our model are checked automatically. If one of them doesn't check out, the ModelStates.IsValid property will be false. This property will also be false if an invalid value for a property type is passed in,
+ ![Alt text](Asserts/modelState.JPG?raw=true)
+ ### *** Note ***
+ The nice thing is that this, too, is not necessary, again, thanks to the API controller attribute. Annotations are automatically checked during model binding and affect the ModelSate dictionary, and the API controller attribute ensures that in case of an invalid ModelState, a 400 Bad Request is returned with the validation annotations returned in the response body.
+
+### Patch
+ The HTTP PATCH method is used to apply partial modifications to a resource. It is defined in RFC 5789. The PATCH method applies partial modifications to a resource. Unlike PUT, which replaces the entire resource, PATCH only updates the specified fields.
+ * Install the neccessary nuget packages for the patch operation.They are 
+ ```bash
+ Microsoft.AspNetCore.JsonPatch
+ Microsoft.AspNetCore.Mvc.NewtonsoftJson
+ ```
+ * Add the following code in the Program.cs file
+ ```bash
+ builder.Services.AddControllers()
+    .AddNewtonsoftJson();
+  ```
+ ![Alt text](Asserts/patch1.JPG?raw=true)
+* Add the following code in the controller
+![Alt text](Asserts/patch2.JPG?raw=true)
+    ![Alt text](Asserts/patch3.JPG?raw=true)
+```bash
+    [HttpPatch("{id}")]
+    public IActionResult PartiallyUpdatePointOfInterest(
+        int id,
+        [FromBody] JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
+    {
+     
+        if (!TryValidateModel(pointOfInterestEntity))
+        {
+            return ValidationProblem(ModelState);
+        }
+    }
+   ```
+   
+   In the above code the "TryValidateModel" method is used to validate the model. If the model is not valid, it returns a 400 Bad Request with the validation errors.
+    ![Alt text](Asserts/patch4.JPG?raw=true)
+   For example we send patch request to remove the Id .So those things are updated .To avoid those operations ,we are using this method to validate the model after applying the patch request.
+
+  
+
+
+### Create File
+   ![Alt text](Asserts/createFile1.JPG?raw=true)
+
 
 
 
