@@ -130,7 +130,18 @@ AddEndpointsApiExplorer and AddSwaggerGen both have to do with the Swagger docum
  ## Attribute Based Routing
   ![Alt text](Asserts/attributebasedrouting.JPG?raw=true)
 ## Problem Details
+```csharp
+   builder.Services.AddProblemDetails(options =>
+            {
 
+                options.CustomizeProblemDetails = ctx =>
+                {
+                    ctx.ProblemDetails.Extensions.Add("additionalInfo", "Additional info example");
+                    ctx.ProblemDetails.Extensions.Add("server", Environment.MachineName);
+                };
+            });
+```
+No external nuget packages are needed.
 ![Alt text](Asserts/describingErrorDetails.JPG?raw=true)
 ```url
 datatracker.ietf.org/doc/html/rfc7807
@@ -140,6 +151,7 @@ The reasoning behind that is that sometimes HTTP status codes are not sufficient
 ## Content Negotiation
 This is the process of selecting the best representation for a given response when there are multiple representations available.
 ## Formatters
+Input formatters are used by Model Binding. Output formatters are used to format responses<br><br>
 Formatters are responsible for serializing and deserializing the data. They are used to convert the data from the server to a format that can be sent over the wire, and vice versa. ASP.NET Core supports multiple formatters out of the box, including JSON, XML, and plain text.
 if that Accept header has a value of application/json, the consumer states that if your API supports the requested format, it should return that format. If it has a value of application XML, it should return an XML representation, and so on. If no accept error is available or if it doesn't support the requested format, it can always default to its default format.
 ![Alt text](Asserts/formatters.JPG?raw=true)
@@ -153,6 +165,16 @@ Support for content negotiation from our actions is implemented by ObjectResult.
 ## Support Formatter
 
 We can also send Not supported response when the requested format is not supported. This is done by adding a NotAcceptable formatter to the list of formatters. This formatter will return a 406 Not Acceptable response if the requested format is not supported.
+
+```csharp
+builder.Services.AddControllers(options =>
+            {
+                options.ReturnHttpNotAcceptable = true; //If the client does not accept the response type, return 406 Not Acceptable.If will not accept the request of the client because the response type will not support the client.
+            }).AddXmlDataContractSerializerFormatters(); //Here we are specifying that we can send the reponse in xml format,so it accept the request if the requested format is xml.
+
+```
+![Alt text](Asserts/xmlFormat.JPG?raw=true)
+
 
 In the below figure we can see that the xmlFormatter is included.So that it will return the response as xml.
 ![Alt text](Asserts/supportFormatters.JPG?raw=true)
@@ -223,6 +245,8 @@ In the below figure we can see that the xmlFormatter is included.So that it will
 
 ### Create File
    ![Alt text](Asserts/createFile1.JPG?raw=true)
+# Working With Services and Dependency Injection
+Compiler Directives
 
 
 
