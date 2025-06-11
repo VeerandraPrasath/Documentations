@@ -51,7 +51,7 @@ Note :
 
 Level of metrics:
 
-![Alt text](Asserts/levelOfMetrics.JPG?raw=true)
+![Alt text](Asserts/levelsOfMetrics.JPG?raw=true)
 
 * Runtime metrics
      These are the metrics which contains detail about the runtime of the application,like how many threads are running,how many garbage collections are happening,how much memory is being used by the application.
