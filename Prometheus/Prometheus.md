@@ -54,7 +54,11 @@ Here we will register some alerting rules .When those rules are triggered ,it wi
 ### Note :
    Metrics which begin with the word node is apply across the whole server which means it is applied for the entire machine or system,not for a single application.
    Eg: node_cpu_seconds_total{mode="idle"} 1.234567890
+
+
 ![Alt text](Asserts/exporterData.JPG?raw=true)
+
+
 In the above image,the node_filefd is the total number of file descriptors allocated by all the processess running in the server.
 
 ### Client Library :
@@ -93,3 +97,17 @@ In the above image,the node_filefd is the total number of file descriptors alloc
    We can easily add new metrics to the application and monitor it in production.
 
    ![Alt text](Asserts/attractiveThing.JPG?raw=true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
