@@ -98,7 +98,68 @@ In the above image,the node_filefd is the total number of file descriptors alloc
 
    ![Alt text](Asserts/attractiveThing.JPG?raw=true)
 
+## Running and Configuring Prometheus
+### Configuring Targets and Using Service Discovery
+ *   To find the targets prometheus uses service discovery mechanism for simple to use and automate 
+ *   The most basic configuration is the static config block where we specify list of target ip address or domain names 
+ * Static configs live inside the Prometheus Configuration file which is a yaml file.
+ * Prometheus can reload the configuration file on the fly without restarting the server but it is difficult to automate the process of adding new targets.It means generating the YAML and updating the file on the server and reloading the configuration file.To use this in a better way,the service discovery come to play.
+ 
+ ### Service discovery
+ Service discovery is used to find the targets.
+ *   Prometheus has a lot of service discovery mechanisms like Kubernetes,Consul,Cloud providers etc.
+ *   These Serice discovery are declared in the Config file of the prometheus.
+ *   There are two types of service discovery .Static and Dynamic
+ #### static service discovery
+ Static service discovery is used to find the targets by specifying the ip address or domain names in the config file.
+ #### dynamic service discovery
+ Dynamic service discovery is used to find the targets dymanically by loading the targets from file,SRV and A records,Consul,Cloud providers etc.
 
+ ### Example of Prometheus Configuration File
+ ```yaml
+ global:
+  scrape_interval: 15s # Default scrape interval
+  evaluation_interval: 15s # Default evaluation interval
+  scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['localhost:9100'] # Node Exporter target
+      - job_name: 'my_app'
+```
+
+### Example of SRV
+```yaml
+scrape_configs:
+  - job_name: 'my_app'
+    dns_sd_configs:
+      - names:
+        - 'myapp.example.com'
+        type: 'SRV'
+        port: 8080
+```
+In SRV,each target are runs in separate port and we can specify the port in the config file.
+### Example of A Records
+```yaml
+scrape_configs:
+  - job_name: 'my_app'
+    dns_sd_configs:
+      - names:
+        - 'myapp.example.com'
+        type: 'A'
+```
+In A records,all the targets are running in the same port .This is because A records are used to resolve the domain name to an IP address, and it does not specify a port number. The targets will be resolved to the default port of the application.
+
+### Example Of Dynamic Service Discovery
+```yaml
+scrape_configs:
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: my_app
+```
 
 
 
